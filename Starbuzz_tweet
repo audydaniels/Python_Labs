@@ -1,0 +1,32 @@
+import urllib.request
+import time
+import tweepy
+
+def get_price():
+    page = urllib.request.urlopen("http://beans-r-us.appspot.com/prices.html")
+    text = page.read().decode("utf8")
+    where = text.find('>$')
+    start_of_price = where + 2
+    end_of_price = where + 6
+    return float(text[start_of_price:end_of_price])
+
+def tweet_price(cost):
+    consumer_key  = 'enter your key'
+    consumer_secret = 'enter your key'
+    access_token = 'enter your key'
+    access_secret = 'enter your key'
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_secret)
+    api = tweepy.API(auth)
+    api.update_status(status=str(cost))
+
+
+entry = input("Do you need the price now?").lower()
+if entry == ("y"): tweet_price(get_price())
+else:
+    price = 99.99
+    while price >= 6.00:
+        time.sleep(5)
+        price = get_price()
+        cost = ("Emergency Buy Order " + str("$" + price))
+    tweet_price(cost)
